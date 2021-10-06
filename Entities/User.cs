@@ -2,18 +2,32 @@
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
-
+using System.Threading;
 namespace Entities
 {
     public sealed class User: Client
     {
+        /// <summary>
+        /// Representa el nombre del cliente
+        /// </summary>
+        private string nickName;
 
         #region Atributos
-
+        /// <summary>
+        /// Thread para recibir mensajes.
+        /// </summary>
+        private Thread getMessages;
         #endregion
 
         #region Propiedades
-
+        /// <summary>
+        /// Representa el nickname del cliente
+        /// </summary>
+        public string NickName
+        {
+            get { return this.nickName; }
+            set { this.nickName = value; }
+        }
         #endregion
 
         #region Constructores
@@ -26,7 +40,12 @@ namespace Entities
         /// <param name="writer"></param>
         /// <param name="reader"></param>
         public User(string nickname, TcpClient socket, NetworkStream stream, BinaryWriter writer, BinaryReader reader):
-            base(nickname, socket, stream, writer, reader) {}
+            base(socket, stream, writer, reader) 
+        {
+            this.NickName = nickname;
+            this.getMessages = new Thread(this.GetMessage);
+            this.getMessages.Start();
+        }
         #endregion
 
         #region Metodos
@@ -44,14 +63,25 @@ namespace Entities
         /// Metodo para recibier mensajes del servidor
         /// </summary>
         /// <returns></returns>
-        public override string GetMessage()
+        protected override void GetMessage()
         {
-            /*
-             Utilizo read string porq no nos vamos a hacer los hardcores
-             usando read bytes y esas cosas
-            */
-            return Reader.ReadString();
+            string message;
+
+            while (true)
+            {
+                /*
+                    Utilizo read string porq no nos vamos a hacer los hardcores
+                    usando read bytes y esas cosas
+                */
+                message = Reader.ReadString();
+                if (message[0] == '/')
+                {
+                    //Aca podemos configurar comandos
+                }
+                Server.messagesQueue.Enqueue($"[{this.NickName}]: {message}");
+            }
         }
+
         #endregion
 
     }

@@ -35,14 +35,24 @@ namespace ConsoleServer
                     }
                     else if (message.Contains("[ ERROR ]"))
                     {
-                        Console.ForegroundColor = ConsoleColor.Green;
+                        Console.ForegroundColor = ConsoleColor.Red;
                     }
                     else if(message.Contains("[ INFO ]"))
                     {
-                        Console.ForegroundColor = ConsoleColor.Magenta;
+                        Console.ForegroundColor = ConsoleColor.Cyan;
                     }
                     Console.WriteLine(message);
                     Console.ResetColor();
+                }
+
+                if (Server.messagesQueue.Count > 0)
+                {
+                    message = Server.messagesQueue.Dequeue();
+                    Console.WriteLine(message);
+                    foreach (User item in server.ClientList)
+                    {
+                        item.SendMessage(message);
+                    }
                 }
             }
         }

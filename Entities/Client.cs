@@ -9,10 +9,7 @@ namespace Entities
     {
         #region Atributos
 
-        /// <summary>
-        /// Representa el nombre del cliente
-        /// </summary>
-        private string nickName;
+       
 
         /// <summary>
         /// Objeto para establecer la conexion con el servidor
@@ -38,14 +35,7 @@ namespace Entities
 
         #region Propiedades
 
-        /// <summary>
-        /// Representa el nickname del cliente
-        /// </summary>
-        public string NickName 
-        {
-            get {return this.nickName; }
-            set { this.nickName = value; }
-        }
+        
 
         /// <summary>
         /// Representa el socket del cliente
@@ -93,9 +83,8 @@ namespace Entities
         /// <param name="stream"></param>
         /// <param name="writer"></param>
         /// <param name="reader"></param>
-        public Client(string nickname, TcpClient socket, NetworkStream stream, BinaryWriter writer, BinaryReader reader)
+        public Client(TcpClient socket, NetworkStream stream, BinaryWriter writer, BinaryReader reader)
         {
-            this.NickName = nickName;
             this.Socket   = socket;
             this.Stream   = stream;
             this.Writer   = writer;
@@ -116,7 +105,7 @@ namespace Entities
         /// Metodo para recibir mensajes
         /// </summary>
         /// <returns>string Mensaje</returns>
-        public abstract string GetMessage();
+        protected abstract void GetMessage();
 
         #endregion
     }

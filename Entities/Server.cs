@@ -37,7 +37,7 @@ namespace Entities
         private Queue<string> serverMessages;
 
         private Thread acceptclients;
-
+        
         #endregion
 
         #region Propiedades
@@ -77,6 +77,11 @@ namespace Entities
 
         #region Constructores
 
+        static Server()
+        {
+            Server.messagesQueue = new Queue<string>();
+        }
+
         /// <summary>
         /// Inicializa el puerto y el socket del servidor. Para fines practicos
         /// hardcodeamos para que escuche en cualquier ip.
@@ -94,6 +99,7 @@ namespace Entities
             this.port = port;
             this.socket = new TcpListener(ip, this.Port);
             this.serverMessages = new Queue<string>();
+            this.clientList = new List<Client>();
         }
         #endregion
 
@@ -145,6 +151,7 @@ namespace Entities
             nickname = r.ReadString();
 
             this.ClientList.Add(new User(nickname, clientSocket, stream, w, r));
+            this.serverMessages.Enqueue(string.Format("[ INFO ] Welcome {0}.", nickname));
         }
 
         public void Run()
